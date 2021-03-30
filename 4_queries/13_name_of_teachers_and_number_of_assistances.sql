@@ -7,6 +7,10 @@ WHERE cohorts.name = 'JUL02'
 GROUP BY teachers.id, cohorts.name
 ORDER BY total_assistances DESC;
 
+
+
+
+
 /*
 SELECT teachers.name as teacher, cohorts.name as cohort, count(assistance_requests) as total_assistances
 FROM teachers
