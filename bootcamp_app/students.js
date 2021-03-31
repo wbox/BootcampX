@@ -1,3 +1,4 @@
+
 const { Pool } = require('pg');
 
 const cohort = process.argv[2];
@@ -15,15 +16,14 @@ pool.query(
   `SELECT students.id, students.name, cohorts.name AS cohort
   FROM students 
   JOIN cohorts ON cohorts.id = students.cohort_id
-  LIMIT 5;`)
-  // .then(res => {
-  //   console.log(res.rows);
-  //   console.log("Number of rows:", res.rowCount);
-  // })
+  WHERE cohorts.name LIKE '%${cohort}%'
+  LIMIT ${limit || 5};`)
   .then(res => {
     res.rows.forEach(user => {
       console.log(`${user.name} has an id ${user.id} and was in the ${user.cohort} cohort`);
     });
   })
   .catch(err => console.log('query error', err.stack));
+
+
 
