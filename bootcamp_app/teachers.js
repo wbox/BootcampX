@@ -1,6 +1,8 @@
 const { Pool } = require('pg');
 
-const cohort = process.argv[2];
+const cohort = process.argv[2] || FEB02;
+const limit = process.argv[3] || 5;
+const values = [`%${cohort}%`, limit]
 
 const sqlQuery = `
 SELECT teachers.name AS teacher, cohorts.name AS cohort
@@ -8,9 +10,10 @@ FROM teachers
 JOIN assistance_requests ON assistance_requests.teacher_id = teachers.id
 JOIN students ON students.id = assistance_requests.student_id
 JOIN cohorts ON cohorts.id = students.cohort_id
-WHERE cohorts.name = '${cohort || "JUL02"}'
+WHERE cohorts.name LIKE $1
 GROUP BY teachers.name, cohorts.name
-ORDER BY teacher;`;
+ORDER BY teacher
+LIMIT $2`;
 
 const pool = new Pool( {
   user:     'vagrant',
@@ -22,7 +25,7 @@ const pool = new Pool( {
 
 
 pool
-.query(sqlQuery)
+.query(sqlQuery, values)
 .then(res => {
   console.log("connected"); 
   res.rows.forEach(data => {
